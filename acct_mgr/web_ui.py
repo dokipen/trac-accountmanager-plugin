@@ -96,7 +96,7 @@ def _create_user(req, env, check_permissions=True):
     db.commit()
 
 
-class SingleUserNofification(NotifyEmail):
+class SingleUserNotification(NotifyEmail):
     """Helper class used for account email notifications which should only be
     sent to one persion, not including the rest of the normally CCed users
     """
@@ -126,7 +126,7 @@ class SingleUserNofification(NotifyEmail):
             self.config.set('notification', 'use_public_cc', old_public_cc)
 
 
-class PasswordResetNotification(SingleUserNofification):
+class PasswordResetNotification(SingleUserNotification):
     template_name = 'reset_password_email.txt'
 
     def notify(self, username, password):
@@ -143,7 +143,7 @@ class PasswordResetNotification(SingleUserNofification):
         projname = self.config.get('project', 'name')
         subject = '[%s] Trac password reset for user: %s' % (projname, username)
 
-        SingleUserNofification.notify(self, username, subject)
+        SingleUserNotification.notify(self, username, subject)
 
 
 class AccountModule(Component):
@@ -500,7 +500,7 @@ class LoginModule(auth.LoginModule):
         return [resource_filename(__name__, 'templates')]
 
 
-class EmailVerificationNotification(SingleUserNofification):
+class EmailVerificationNotification(SingleUserNotification):
     template_name = 'verify_email.txt'
 
     def notify(self, username, token):
@@ -517,7 +517,7 @@ class EmailVerificationNotification(SingleUserNofification):
         projname = self.config.get('project', 'name')
         subject = '[%s] Trac email verification for user: %s' % (projname, username)
 
-        SingleUserNofification.notify(self, username, subject)
+        SingleUserNotification.notify(self, username, subject)
 
 
 class EmailVerificationModule(Component):
